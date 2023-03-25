@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-json-db": "^2.1.5",
+    "node-sense-hat": "0.0.2",
+    "ws": "^8.13.0"
+  },
+  "name": "uwrf-rocket-club-flight-recorder",
+  "version": "1.0.0",
+  "description": "Records flight data on the rocket. It might include a fancy web interface too.",
+  "main": "server.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Erik Popp",
+  "license": "ISC"
+}

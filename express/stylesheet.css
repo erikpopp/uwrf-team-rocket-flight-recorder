@@ -1,0 +1,25 @@
+/* stylesheet.css
+   Stylesheet for UWRF Team Rocket Flight Recorder Web UI
+*/
+
+li {
+  list-style: none;
+}
+
+li::before {
+  content: '';
+  display: inline-block;
+  background-size: contain;
+}
+
+li.finished {
+  list-style-image: url('green-checkmark.png');
+}
+
+li.unfinished {
+  list-style-image: url('red-checkmark.png');
+}
+
+li.stalled {
+  list-style-image: url('yellow-checkmark.png');
+}
