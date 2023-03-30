@@ -11,11 +11,11 @@ X Find a way to efficiently pipe a data stream to the web UI
 
 //load libraries
 const libsensehat = require("node-sense-hat");
-const fs = require("fs");
+const fs          = require("fs");
 
 
 //initialize libraries
-const IMU = new libsensehat.Imu.IMU;
+IMU = new libsensehat.Imu.IMU();
 
 
 //declare variables
@@ -23,7 +23,7 @@ var log_file_name;
 var log_file_name_base = "uwrf-rocket-club-flight-data-";
 var log_file_directory = "./flight-data";
 var loop_counter = 0;
-var sensor_read_interval_id;
+var sensor_read_interval_handle;
 
 
 //declare functions
@@ -43,6 +43,12 @@ function get_valid_log_file_name()
   console.log("decided to use \"" + log_file_name_candidate + "\"");
   return log_file_name_candidate;
 };
+
+function sensor_read()
+{
+  console.log("IMU = " + JSON.stringify(IMU) );
+  IMU.getData(sensor_read_callback);
+}
 
 function sensor_read_callback(err, data)
 {
@@ -82,5 +88,5 @@ log_file_stream = fs.createWriteStream(log_file_name, {flags: 'a', AutoClose: tr
 
 
 //main loop
-//setTimeout(IMU.getValue, 1000, sensor_read_callback);
-sensor_read_interval_id = setTimeout(console.log, 1000, "Stuff");
+//sensor_read_interval_handle = setInterval(IMU.getValue, 1000, sensor_read_callback);
+sensor_read_interval_handle = setInterval(console.log, 1000, "stuff");
