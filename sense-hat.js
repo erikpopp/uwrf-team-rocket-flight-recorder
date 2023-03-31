@@ -15,7 +15,8 @@ const fs          = require("fs");
 
 
 //initialize libraries
-IMU = new libsensehat.Imu.IMU();
+var IMU = new libsensehat.Imu.IMU();
+var getValue = IMU.getValue;
 
 
 //declare variables
@@ -88,5 +89,4 @@ log_file_stream = fs.createWriteStream(log_file_name, {flags: 'a', AutoClose: tr
 
 
 //main loop
-//sensor_read_interval_handle = setInterval(IMU.getValue, 1000, sensor_read_callback);
-sensor_read_interval_handle = setInterval(console.log, 1000, "stuff");
+sensor_read_interval_handle = setInterval(getValue.bind(IMU), 1000, sensor_read_callback);  //binding to IMU object is necessary to keep getValue() in proper scope to work
