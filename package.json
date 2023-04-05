@@ -7,7 +7,7 @@
   "name": "uwrf-rocket-club-flight-recorder",
   "version": "0.1.0",
   "description": "Records flight data on the rocket. It might include a fancy web interface too.",
-  "main": "server.js",
+  "main": "forever server.js sense-hat.js",
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
