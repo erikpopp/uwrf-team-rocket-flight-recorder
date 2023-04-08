@@ -5,7 +5,8 @@ console.log("script.js: loaded");
 
 //declare variables
 var recorder_on = false;
-
+var socketio = io();
+console.log("loaded socket.io");
 
 //declare functions
 function toggle_recorder_on()

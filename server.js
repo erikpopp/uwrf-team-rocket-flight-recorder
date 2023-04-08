@@ -14,19 +14,32 @@ X Make sure that there is a simple and efficient way for the web UI to access th
 X Make the UI look good
 */
 
-const http = require('http');
-const express = require('express');
-const path = require('path');
-const app = express();
-app.use(express.json());
-app.use(express.static("web-interface"));
+//load modules
+const http               = require('http'     );
+const express            = require('express'  );
+const path               = require('path'     );
+const socketio           = require('socket.io');
 
-// default URL for website
+
+//initialize modules
+const app                = express();
+app.use(express.json() );
+app.use(express.static("web-interface") );
+
+const http_server        = http.createServer(app);
+const sense_stream       = new socketio.Server(http_server);
+
+//serve local socket.io script from package repository
+app.use('/socket.io.js', function(req,res) {
+  res.sendFile(path.join(__dirname + '/node_modules/socket.io/client-dist/socket.io.js') );
+});
+
+//set up express to serve interface
 app.use('/', function(req,res){
     res.sendFile(path.join(__dirname+'/web-interface/index.html'));  //__dirname = project folder
   });
-const server = http.createServer(app);
-const port = 80;
 
-server.listen(port);
+
+const port = 80;
+http_server.listen(port);
 console.debug('Server listening on port ' + port);
