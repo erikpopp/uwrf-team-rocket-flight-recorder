@@ -26,8 +26,8 @@ const app                = express();
 app.use(express.json() );
 app.use(express.static("web-interface") );
 
-const http_server        = http.createServer(app);
-const sense_stream       = new socketio.Server(http_server);
+//declare state variables
+var recording = false;
 
 //serve local socket.io script from package repository
 app.use('/socket.io.js', function(req,res) {
@@ -39,7 +39,38 @@ app.use('/', function(req,res){
     res.sendFile(path.join(__dirname+'/web-interface/index.html'));  //__dirname = project folder
   });
 
+//set up socket.io to support a bidirectional communication channel between the user and the server
+const http_server        = http.createServer(app);
+const sense_socket       = new socketio.Server(http_server);
 
-const port = 80;
+sense_socket.on('connection', (socket) => {
+  console.log('Received socket.io connection');
+  socket.on('disconnect', () => {
+    console.log('Socket.io session disconnected');
+  });
+});
+
+sense_socket.on('*', (socket) => {
+  console.log("event received: " + socket.event);
+});
+
+sense_socket.on('do something', (socket, callback) => {
+  console.log('received command to do something, doing something');
+  callback("I did something");
+});
+
+sense_socket.on('start recording', (socket, callback) => {
+  console.log('starting recording');
+  recording = true;
+  callback({recording: true});
+});
+
+sense_socket.on('stop recording', (socket) => {
+  console.log('stopping recording');
+  recording = false;
+});
+
+
+const port               = 80;
 http_server.listen(port);
 console.debug('Server listening on port ' + port);

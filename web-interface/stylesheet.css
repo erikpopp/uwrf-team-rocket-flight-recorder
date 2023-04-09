@@ -24,11 +24,11 @@ li.stalled {
   list-style-image: url('yellow-checkmark.png');
 }
 
-#start-stop.stopped {
+#start-stop {
   background-color: green;
 }
 
-#start-stop.started {
+#start-stop.running {
   background-color: red;
 }
 

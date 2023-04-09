@@ -9,13 +9,25 @@ var socketio = io();
 console.log("loaded socket.io");
 
 //declare functions
-function toggle_recorder_on()
+function record()
 {
-  console.log("toggle_recorder_on()");
-  recorder_on = !recorder_on;  //boolean NOT
-  console.log("recorder_on = " + recorder_on);
-  console.log("start-stop.className = " + $("#start-stop").className);
+  console.log("record()");
+  socketio.emit("start recording", record_started_callback);
+}
+
+function record_started_callback(response)
+{
+  console.log("record_started_callback(" + response + ")");
+  console.log("response.recording = " + response.recording);
+  recorder_on = true;
   update_page();
+}
+
+function dosomething()
+{
+  socketio.emit("do something", (response) => {
+    console.log("response = " + response);
+  });
 }
 
 function update_page()
@@ -23,14 +35,12 @@ function update_page()
   if(recorder_on)
   {
     $("#start-stop").html("Stop");
-    $("#start-stop").addClass("started");
-    $("#start-stop").removeClass("stopped");
+    $("#start-stop").addClass("running");
   }
   else
   {
     $("#start-stop").html("Start");
-    $("#start-stop").addClass("stopped");
-    $("#start-stop").removeClass("started");
+    $("#start-stop").removeClass("running");
   }
 }
 
