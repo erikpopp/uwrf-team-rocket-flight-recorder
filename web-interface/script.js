@@ -9,10 +9,16 @@ var socketio = io();
 console.log("loaded socket.io");
 
 //declare functions
+function connected()
+{
+  $("#connection-status").addClass("connected");
+  $("#connection-status").text("Connected");
+}
+
 function record()
 {
   console.log("record()");
-  socketio.emit("start recording", record_started_callback);
+  socketio.emit('record', record_started_callback);
 }
 
 function record_started_callback(response)
@@ -21,13 +27,6 @@ function record_started_callback(response)
   console.log("response.recording = " + response.recording);
   recorder_on = true;
   update_page();
-}
-
-function dosomething()
-{
-  socketio.emit("do something", (response) => {
-    console.log("response = " + response);
-  });
 }
 
 function update_page()
@@ -44,6 +43,10 @@ function update_page()
   }
 }
 
+
+//set up events
+socketio.on("connected", connected);
+socketio.on("record-acknowledgement", record_started_callback);
 
 
 $(document).ready(update_page);

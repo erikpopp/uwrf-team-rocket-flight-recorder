@@ -28,8 +28,15 @@ li.stalled {
   background-color: green;
 }
 
-#start-stop.running {
+#connection-status {
   background-color: red;
 }
 
+#connection-status.connected {
+  background-color: green;
+}
+
+#start-stop.running {
+  background-color: red;
+}
 

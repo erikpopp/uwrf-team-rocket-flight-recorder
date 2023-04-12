@@ -5,7 +5,7 @@
     "socket.io": "^4.6.1"
   },
   "name": "uwrf-rocket-club-flight-recorder",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "Records flight data on the rocket. It might include a fancy web interface too.",
   "main": "forever server.js sense-hat.js",
   "devDependencies": {},
