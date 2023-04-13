@@ -3,50 +3,74 @@
 
 console.log("script.js: loaded");
 
-//declare variables
-var recorder_on = false;
+//declare state variables
+var recording = false;
 var socketio = io();
-console.log("loaded socket.io");
+
+//declare document variables
+var connection_status;
+var start_stop;
 
 //declare functions
-function connected()
+function connected(server_recording)
 {
-  $("#connection-status").addClass("connected");
-  $("#connection-status").text("Connected");
+  console.log("connected; server recording status: " + server_recording);
+  recording = server_recording;
+  connection_status.removeClass().addClass("connected");
+  connection_status.text("Connected");
+
+  (recording) ? record_callback() : stop_callback();  //update the UI when the server is restarted or disconnected and then reconnects
+}
+
+function disconnected()
+{
+  console.log("disconnected");
+  connection_status.removeClass().addClass("reconnecting");
+  connection_status.text("Reconnecting...");
 }
 
 function record()
 {
   console.log("record()");
-  socketio.emit('record', record_started_callback);
+  socketio.emit("record", record_callback);
 }
 
-function record_started_callback(response)
+function record_callback()
 {
-  console.log("record_started_callback(" + response + ")");
-  console.log("response.recording = " + response.recording);
-  recorder_on = true;
-  update_page();
+  console.log("record_started_callback()");
+  recording = true;
+  start_stop.off("click").on("click", stop);
+  start_stop.removeClass().addClass("running");
+  start_stop.text("Stop");
 }
 
-function update_page()
+function setup()
 {
-  if(recorder_on)
-  {
-    $("#start-stop").html("Stop");
-    $("#start-stop").addClass("running");
-  }
-  else
-  {
-    $("#start-stop").html("Start");
-    $("#start-stop").removeClass("running");
-  }
+  connection_status = $("#connection-status");
+  start_stop = $("#start-stop");
+  start_stop.click(record);
+}
+
+function stop()
+{
+  console.log("stop()");
+  socketio.emit("stop", stop_callback);
+}
+
+function stop_callback()
+{
+  console.log("stop_callback()");
+  recording = false;
+  start_stop.off("click").on("click", record);
+  start_stop.removeClass();
+  start_stop.text("Start");
 }
 
 
 //set up events
 socketio.on("connected", connected);
-socketio.on("record-acknowledgement", record_started_callback);
+socketio.on("disconnect", disconnected);
+socketio.on("record-acknowledgement", record_callback);
+socketio.on("stop", stop_callback);
 
-
-$(document).ready(update_page);
+$(document).ready(setup);

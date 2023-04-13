@@ -49,21 +49,21 @@ const sense_socket       = new socketio.Server(http_server);
 
 sense_socket.on('connection', (socket) => {
   console.log('Received socket.io connection');
-  socket.emit('connected');
+  sense_socket.emit('connected', recording);
   socket.on('disconnect', () => {
     console.log('Socket.io session disconnected');
   });
 
-  socket.on('record', (data, acknowledgement) => {
-    console.log('starting recording with message "' + data + '"');
+  socket.on('record', (acknowledgement) => {
+    console.log('starting recording');
     recording = true;
     acknowledgement("Acknowledgement");
-//    sense_socket.emit('recording-acknowlegement');
-  });
+   });
 
-  socket.on('stop recording', (socket) => {
+  socket.on('stop', (acknowledgement) => {
     console.log('stopping recording');
     recording = false;
+    acknowledgement();
   });
 });
 

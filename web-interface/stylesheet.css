@@ -36,6 +36,10 @@ li.stalled {
   background-color: green;
 }
 
+#connection-status.reconnecting {
+  background-color: yellow;
+}
+
 #start-stop.running {
   background-color: red;
 }
