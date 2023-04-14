@@ -14,17 +14,40 @@ X Make sure that there is a simple and efficient way for the web UI to access th
 X Make the UI look good
 */
 
+//configuration
+const sense_hat_file_name = "sense-hat.js";
+
+
 //load modules
 const http          = require('http'         );
+const child_process = require('child_process');
 const express       = require('express'      );
 const path          = require('path'         );
 const socketio      = require('socket.io'    );
+
+
+//define functions
+function start_sense_hat()
+{
+  sense_hat.restarts++;
+  console.log("starting " + sense_hat_file_name + ", try #" + sense_hat.restarts);
+  sense_hat.process = child_process.fork(sense_hat_file_name);
+  sense_hat.process.on('error', start_sense_hat);
+  sense_hat.process.on('close', start_sense_hat);
+}
 
 
 //initialize modules
 const app = express();
 app.use(express.json() );
 app.use(express.static("web-interface") );
+
+console.log("starting " + sense_hat_file_name);
+var sense_hat = {
+  process: undefined,
+  restarts: 1
+};
+start_sense_hat();
 
 
 //declare state variables
@@ -44,12 +67,12 @@ app.use('/', function(req,res){
 
 
 //set up socket.io to support a bidirectional communication channel between the user and the server
-const http_server        = http.createServer(app);
-const sense_socket       = new socketio.Server(http_server);
+const http_server = http.createServer(app);
+const io          = new socketio.Server(http_server);
 
-sense_socket.on('connection', (socket) => {
+io.on('connection', (socket) => {
   console.log('Received socket.io connection');
-  sense_socket.emit('connected', recording);
+  io.emit('connected', recording);
   socket.on('disconnect', () => {
     console.log('Socket.io session disconnected');
   });

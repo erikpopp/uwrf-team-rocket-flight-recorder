@@ -10,8 +10,10 @@ X Find a way to efficiently pipe a data stream to the web UI
 
 
 //load libraries
-const libsensehat = require("node-sense-hat");
-const fs          = require("fs");
+//const child_process = require("child_process");
+const cli_argparse  = require("cli-argparse");
+const libsensehat   = require("node-sense-hat");
+const fs            = require("fs");
 
 
 //initialize libraries
@@ -83,10 +85,23 @@ return ( (Math.pow(pressure_sea_level/pressure, 1/5.257) - 1) * (temperature + 2
 }
 
 
+//process arguments
+var parsed_arguments = cli_argparse();
+
+console.log("parsed_arguments = " + JSON.stringify(parsed_arguments));
+
+if(parsed_arguments.flags.childProcess)
+{
+  console.log("I am a child process");
+  console.log("parsed_arguments.flags.childProcess = " + parsed_arguments.flags.childProcess);
+}
+
+
 //initialize variables
 log_file_name = get_valid_log_file_name();
 log_file_stream = fs.createWriteStream(log_file_name, {flags: 'a', AutoClose: true} );  //file handle flag "a" means append mode
 
 
 //main loop
-sensor_read_interval_handle = setInterval(getValue.bind(IMU), 1000, sensor_read_callback);  //binding to IMU object is necessary to keep getValue() in proper scope to work
+//sensor_read_interval_handle = setInterval(getValue.bind(IMU), 1000, sensor_read_callback);  //binding to IMU object is necessary to keep getValue() in proper scope to work
+

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cli-argparse": "^1.1.2",
     "express": "^4.18.2",
     "node-sense-hat": "0.0.2",
     "socket.io": "^4.6.1"
