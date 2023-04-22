@@ -43,11 +43,11 @@ var help = ["",
 var log_file_name;
 var log_file_name_base = "uwrf-rocket-club-flight-data-";
 var log_file_directory = "./flight-data";
-var loop_counter = 0;
+var sample_counter = 0;
 var report;
 var sensor_read_interval_ms = 1000;
 var sensor_read_interval_handle;
-var server_api;
+var api;
 
 
 //declare functions
@@ -76,20 +76,24 @@ function Message(type, body)
 }
 
 
-function process_message(message)
+function process_message(message, args)
 {
   console.log("received new message: " + JSON.stringify(message) );
+  api[message].apply(this, args);
 }
 
-
-function report_console()
+function report()
 {
-  console.log(JSON.stringify(flight_data_sample) );
+  console.log("sense-hat.js: default report function");
 }
 
-function report_server()
+function report_console(flight_data_sample)
 {
-  report_console();
+  console.log("Sample data: " + JSON.stringify(flight_data_sample) );
+}
+
+function report_server(flight_data_sample)
+{
   process.send(new Message("flight data sample", flight_data_sample) );
 }
 
@@ -103,7 +107,8 @@ function sensor_read()
 
 function sensor_read_callback(err, data)
 {
-  console.log("reading data...");
+  sample_counter++;
+  console.log("Taking sample #" + sample_counter);
 
 //inform of any errors in sensor reading
   if(err !== null)
@@ -114,8 +119,9 @@ function sensor_read_callback(err, data)
 
   var flight_data_sample = {...data};
   flight_data_sample.altitude_calculated = altitude_hypersometric(flight_data_sample.temperature, flight_data_sample.pressure);
+  flight_data_sample.sample_number = sample_counter;
 
-  console.log("Recording sample: " + JSON.stringify(flight_data_sample) );
+  report(flight_data_sample);
   log_file_stream.write(JSON.stringify(flight_data_sample) + "\n");
 }
 
@@ -123,8 +129,15 @@ function sensor_read_callback(err, data)
 
 function start_recording()
 {
-  console.log("Starting recording every " + sensor_read_ms + " ms");
+  console.log("Starting recording every " + sensor_read_interval_ms + " ms");
   sensor_read_interval_handle = setInterval(getValue.bind(IMU), sensor_read_interval_ms, sensor_read_callback); //binding to IMU object is necessary to keep getValue() in proper scope to work
+  process.send(new Message("start_recording_callback", true) );
+}
+
+function stop_recording()
+{
+  console.log("Stopping recording");
+  clearInterval(sensor_read_interval_handle);
 }
 
 
@@ -146,6 +159,8 @@ function altitude_hypersometric(temperature, pressure)
 var parsed_arguments = cli_argparse();
 console.log("parsed_arguments = " + JSON.stringify(parsed_arguments));
 
+
+
 if( (parsed_arguments.raw.length == 0) || (parsed_arguments.flags.h) || (parsed_arguments.flags.help) )
 {
   console.log(help);
@@ -162,8 +177,8 @@ if(typeof parsed_arguments.options.sensorReadInterval == "string")  //cli_argpar
 //initialize variables
 log_file_name = get_valid_log_file_name();
 log_file_stream = fs.createWriteStream(log_file_name, {flags: 'a', AutoClose: true} );  //file handle flag "a" means append mode
-server_api = {
-start: start_recording
+api = {
+  start_recording: start_recording
 };
 
 
@@ -171,15 +186,16 @@ start: start_recording
 if(parsed_arguments.flags.childProcess)
 {
   console.log("I've been told that I am a child process; checking if this is true");
-  console.log("typeof process.send = " + typeof process.send);
+
   if(typeof process.send === "function")
   {
     console.log("I can access the nodejs API for communicating with a parent process; setting up event listeners for communicating with server.js");
+	report = report_server;
     process.on("message", process_message);
   }
   else
   {
-    console.log("I could not access the nodejs API for communicating with a parent process; are you sure that you called me as a child process of another node process? I expect to be called using process.fork()");
+    console.error("I could not access the nodejs API for communicating with a parent process; are you sure that you called me as a child process of another node process? I expect to be called using process.fork()");
     process.exit();
   }
 }
@@ -187,5 +203,6 @@ if(parsed_arguments.flags.childProcess)
 //otherwise, assume that I'm being run directly and start reading sensor data
 else
 {
+  report = report_console;
   sensor_read_interval_handle = setInterval(getValue.bind(IMU), sensor_read_interval_ms, sensor_read_callback);  //binding to IMU object is necessary to keep getValue() in proper scope to work
 }

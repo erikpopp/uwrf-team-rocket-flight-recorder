@@ -1,6 +1,5 @@
 #!/bin/bash
 #start-server.sh
-#starts the server using the "forever" process manager
+#starts the server in a way that can be easily called from Debian's rc.local
 
-forever server.js
-#forever server.js sense-hat.js
+node /root/uwrf-rocket-club-flight-recorder/server.js
