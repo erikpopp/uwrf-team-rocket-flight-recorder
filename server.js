@@ -27,13 +27,20 @@ const socketio      = require('socket.io'    );
 
 
 //define functions
+function on_flight_data_sample(message)
+{
+  console.log("flight data sample: " + JSON.stringify(message) );
+}
+
+
 function start_sense_hat()
 {
   sense_hat.restarts++;
   console.log("starting " + sense_hat_file_name + ", try #" + sense_hat.restarts);
-  sense_hat.process = child_process.fork(sense_hat_file_name);
+  sense_hat.process = child_process.fork(sense_hat_file_name, ["--child-process"]);
   sense_hat.process.on('error', start_sense_hat);
   sense_hat.process.on('close', start_sense_hat);
+  sense_hat.process.on("flight data sample", on_flight_data_sample);
 }
 
 
@@ -48,6 +55,8 @@ var sense_hat = {
   restarts: 1
 };
 start_sense_hat();
+
+sense_hat.process.send("start_recording");
 
 
 //declare state variables
