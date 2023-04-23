@@ -2,6 +2,11 @@
    Stylesheet for UWRF Team Rocket Flight Recorder Web UI
 */
 
+button {
+  width: 100%;
+  font-size: 2em;
+}
+
 li {
   list-style: none;
 }
@@ -28,6 +33,14 @@ li.stalled {
   background-color: green;
 }
 
+#start-stop.running {
+  background-color: red;
+}
+
+#start-stop.starting, #start-stop.stopping {
+  background-color: yellow;
+}
+
 #connection-status {
   background-color: red;
 }
@@ -40,7 +53,11 @@ li.stalled {
   background-color: yellow;
 }
 
-#start-stop.running {
-  background-color: red;
+#file-picker {
+  border: 5px solid orange;
+}
+
+#messages {
+  border: 5px solid grey;
 }
 

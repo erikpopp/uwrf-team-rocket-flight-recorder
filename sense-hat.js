@@ -53,13 +53,13 @@ var api;
 //declare functions
 function get_valid_log_file_name()
 {
-  var log_number_candidate = 1;
+  var log_number_candidate = 0;
   var log_file_name_candidate;
 
   do
   {
     log_number_candidate++;
-    log_file_name_candidate = log_file_directory + "/" + log_file_name_base + log_number_candidate.toString() + ".log";
+    log_file_name_candidate = log_file_directory + "/" + log_file_name_base + zero_padded(log_number_candidate, 3) + ".log";
     console.log("trying \"" + log_file_name_candidate + "\"");
   }
   while(fs.existsSync(log_file_name_candidate) );
@@ -94,7 +94,7 @@ function report_console(flight_data_sample)
 
 function report_server(flight_data_sample)
 {
-  process.send(new Message("flight data sample", flight_data_sample) );
+  process.send(new Message("sense_hat_flight_data_sample", flight_data_sample) );
 }
 
 
@@ -125,21 +125,21 @@ function sensor_read_callback(err, data)
   log_file_stream.write(JSON.stringify(flight_data_sample) + "\n");
 }
 
-
-
-function start_recording()
+function server_start_recording()
 {
   console.log("Starting recording every " + sensor_read_interval_ms + " ms");
-  sensor_read_interval_handle = setInterval(getValue.bind(IMU), sensor_read_interval_ms, sensor_read_callback); //binding to IMU object is necessary to keep getValue() in proper scope to work
-  process.send(new Message("start_recording_callback", true) );
+  sensor_read_interval_handle = setInterval(getValue.bind(IMU), sensor_read_interval_ms, sensor_read_callback); //bind getValue() to the IMU object so its "this" object will be correct
+  log_file_name = get_valid_log_file_name();
+  log_file_stream = fs.createWriteStream(log_file_name, {flags: 'a', AutoClose: true} );
 }
 
-function stop_recording()
+function server_stop_recording()
 {
   console.log("Stopping recording");
   clearInterval(sensor_read_interval_handle);
+  sample_counter = 0;
+  log_file_stream.close();
 }
-
 
 function altitude_hypersometric(temperature, pressure)
 {
@@ -154,12 +154,20 @@ function altitude_hypersometric(temperature, pressure)
 }
 
 
+function zero_padded(number, length)
+{
+  var number_as_text = number.toString();
+  for(var loop_counter = 0; number_as_text.length < length; loop_counter++)
+  {
+    number_as_text = "0" + number_as_text;
+  }
+  return number_as_text;
+}
+
+
 
 //process arguments
 var parsed_arguments = cli_argparse();
-console.log("parsed_arguments = " + JSON.stringify(parsed_arguments));
-
-
 
 if( (parsed_arguments.raw.length == 0) || (parsed_arguments.flags.h) || (parsed_arguments.flags.help) )
 {
@@ -175,10 +183,9 @@ if(typeof parsed_arguments.options.sensorReadInterval == "string")  //cli_argpar
 
 
 //initialize variables
-log_file_name = get_valid_log_file_name();
-log_file_stream = fs.createWriteStream(log_file_name, {flags: 'a', AutoClose: true} );  //file handle flag "a" means append mode
 api = {
-  start_recording: start_recording
+  server_start_recording: server_start_recording,
+  server_stop_recording:  server_stop_recording
 };
 
 
@@ -204,5 +211,5 @@ if(parsed_arguments.flags.childProcess)
 else
 {
   report = report_console;
-  sensor_read_interval_handle = setInterval(getValue.bind(IMU), sensor_read_interval_ms, sensor_read_callback);  //binding to IMU object is necessary to keep getValue() in proper scope to work
+  server_start_recording();
 }

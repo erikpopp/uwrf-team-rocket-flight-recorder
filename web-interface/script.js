@@ -4,7 +4,10 @@
 console.log("script.js: loaded");
 
 //declare state variables
+var clear_logs;
+var file_picker;
 var recording = false;
+var messages;
 var socketio = io();
 
 //declare document variables
@@ -12,6 +15,13 @@ var connection_status;
 var start_stop;
 
 //declare functions
+function client_clear_logs()
+{
+  console.log("clearing logs");
+  socketio.emit("client_clear_logs");
+}
+
+
 function connected(server_recording)
 {
   console.log("connected; server recording status: " + server_recording);
@@ -20,6 +30,8 @@ function connected(server_recording)
   connection_status.text("Connected");
 
   (recording) ? record_callback() : stop_callback();  //update the UI when the server is restarted or disconnected and then reconnects
+
+  socketio.emit("client_list_logs", display_logs);
 }
 
 function disconnected()
@@ -29,9 +41,37 @@ function disconnected()
   connection_status.text("Reconnecting...");
 }
 
+function display_flight_data(flight_data)
+{
+  messages.html("Flight Data:<br>" + JSON.stringify(flight_data) );
+}
+
+function display_logs(log_list)
+{
+  var file_picker_html;
+  file_picker.empty();
+  for(var loop_counter = 0; loop_counter < log_list.length; loop_counter++)
+  {
+    file_picker.append("<tr><td id=\"" + log_list[loop_counter] + "\">" + log_list[loop_counter] + "</td><td></td></tr>");
+  }
+  file_picker.html(file_picker_html);
+}
+
+
+function download_file(event)
+{
+  var link = document.createElement("a");
+  link.download = event.target.id;
+  link.href = event.target.id;
+  link.click();
+}
+
 function record()
 {
+client_clear_logs();
   console.log("record()");
+  start_stop.removeClass().addClass("starting");
+  start_stop.text("Starting...");
   socketio.emit("record", record_callback);
 }
 
@@ -46,14 +86,26 @@ function record_callback()
 
 function setup()
 {
+  clear_logs = $("#clear_logs");
+  clear_logs.click(client_clear_logs);
   connection_status = $("#connection-status");
+  file_picker = $("#file-picker");
+  file_picker.click(download_file);
+  messages = $("#messages");
   start_stop = $("#start-stop");
   start_stop.click(record);
+}
+
+function server_handle_error(error_message)
+{
+  console.log("Received an error from sense-hat.js: " + JSON.stringify(error_message) );
 }
 
 function stop()
 {
   console.log("stop()");
+  start_stop.removeClass().addClass("stopping");
+  start_stop.text("Stopping...");
   socketio.emit("stop", stop_callback);
 }
 
@@ -71,6 +123,9 @@ function stop_callback()
 socketio.on("connected", connected);
 socketio.on("disconnect", disconnected);
 socketio.on("record-acknowledgement", record_callback);
+socketio.on("sense_hat_handle_error", server_handle_error);
+socketio.on("server_flight_data_sample", display_flight_data);
+socketio.on("server_list_logs", display_logs);
 socketio.on("stop", stop_callback);
 
 $(document).ready(setup);
