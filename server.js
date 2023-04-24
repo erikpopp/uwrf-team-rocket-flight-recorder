@@ -25,8 +25,9 @@ const socketio      = require('socket.io'    );
 
 
 //declare variables
-var flight_data_log_directory = "flight-data";
+var flight_data_log_directory = path.normalize("flight-data");
 var flight_data_log_list = [];
+var list_logs_interval_handle;
 var recording = false;
 var sense_hat_server_api;
 var sense_hat_state = {
@@ -42,13 +43,14 @@ function client_clear_logs()
   console.log("clearing logs");
   fs.readdir(flight_data_log_directory, (err, file_list) => {
     file_list.forEach(file => {
-    fs.unlink(file, (err) => {
-    console.log("deleting " + file);
-    console.log("error: " + JSON.stringify(err) );
-  });
+      var full_file_path = path.normalize("./" + flight_data_log_directory + "/" + file);
+      fs.unlink(full_file_path, (err) => {
+        console.log("deleting " + full_file_path );
+        console.log("error: " + JSON.stringify(err) );
+      });
     });
+    setTimeout(server_list_logs,1000);
   });
-  server_list_logs();
 }
 
 
@@ -69,15 +71,6 @@ function client_connection_callback(socket)
 function client_disconnect_callback()
 {
   console.log('Socket.io session disconnected');
-}
-
-
-function server_list_logs()
-{
-  console.log("listing logs");
-  fs.readdir(flight_data_log_directory, (err, file_list) => {
-    io.emit("server_list_logs", file_list);
-  });
 }
 
 
@@ -121,15 +114,18 @@ function sense_hat_process_message(sense_hat_message)
 }
 
 
-function serve_socket_io_js(req,res)
+function server_list_logs()
 {
-  res.sendFile(path.join(__dirname + '/node_modules/socket.io/client-dist/socket.io.js') );
+  console.log("listing logs");
+  fs.readdir(path.normalize(flight_data_log_directory), (err, file_list) => {
+    io.emit("server_list_logs", file_list);
+  });
 }
 
 
-function serve_web_interface(req,res)
+function serve_socket_io_js(req,res)
 {
-  res.sendFile(path.join(__dirname+'/web-interface/index.html'));  //__dirname = project folder
+  res.sendFile(path.join(__dirname + '/node_modules/socket.io/client-dist/socket.io.js') );
 }
 
 
@@ -146,10 +142,6 @@ function start_sense_hat()
 
 //initialize modules
 const app = express();
-app.use(express.json() );
-app.use(express.static("web-interface") );
-
-console.log("starting " + sense_hat_state.file_name);
 
 
 
@@ -160,12 +152,23 @@ sense_hat_server_api = {
 
 
 
+//not needed for this project, but standard - needed for HTTP POST and PUT requests, but not for GET and DELETE
+//see this forum question: https://stackoverflow.com/questions/23259168/what-are-express-json-and-express-urlencoded
+//app.use(express.json() );
+
+
+
 //serve local socket.io script from package repository
 app.use('/socket.io.js', serve_socket_io_js);
 
 
+//serve flight data logs
+console.log("flight_data_log_directory = " + flight_data_log_directory);
+app.use("/flight-data", express.static(flight_data_log_directory) );
+
+
 //set up express to serve interface
-app.use('/', serve_web_interface);
+app.use("/", express.static("web-interface") );
 
 
 //set up socket.io to support a bidirectional communication channel between the user and the server
@@ -181,3 +184,8 @@ console.debug('Server listening on port ' + port);
 
 //start and set up sense hat
 start_sense_hat();
+
+
+
+//watch log folder for changes
+fs.watch(flight_data_log_directory, server_list_logs);

@@ -52,7 +52,7 @@ function display_logs(log_list)
   file_picker.empty();
   for(var loop_counter = 0; loop_counter < log_list.length; loop_counter++)
   {
-    file_picker.append("<tr><td id=\"" + log_list[loop_counter] + "\">" + log_list[loop_counter] + "</td><td></td></tr>");
+    file_picker.append("<li id=\"" + log_list[loop_counter] + "\"><button class=\"download-button\">" + log_list[loop_counter] + "</button></li>");
   }
   file_picker.html(file_picker_html);
 }
@@ -60,15 +60,21 @@ function display_logs(log_list)
 
 function download_file(event)
 {
-  var link = document.createElement("a");
-  link.download = event.target.id;
-  link.href = event.target.id;
-  link.click();
+  var element_clicked = event.target;
+  var parent_cell = element_clicked.parentNode;
+
+  if(element_clicked.className == "download_button")
+  {
+    console.log("clicked on download button for file \"" + parent_cell.id + "\"");
+    var link = document.createElement("a");
+    link.download = parent_cell.id;
+    link.href = "flight-data/" + parent_cell.id;
+    link.click();
+  }
 }
 
 function record()
 {
-client_clear_logs();
   console.log("record()");
   start_stop.removeClass().addClass("starting");
   start_stop.text("Starting...");
@@ -86,7 +92,7 @@ function record_callback()
 
 function setup()
 {
-  clear_logs = $("#clear_logs");
+  clear_logs = $("#clear-logs");
   clear_logs.click(client_clear_logs);
   connection_status = $("#connection-status");
   file_picker = $("#file-picker");
@@ -116,6 +122,7 @@ function stop_callback()
   start_stop.off("click").on("click", record);
   start_stop.removeClass();
   start_stop.text("Start");
+  messages.text("");
 }
 
 
