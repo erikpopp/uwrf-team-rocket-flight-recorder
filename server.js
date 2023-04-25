@@ -16,12 +16,12 @@ X Make the UI look good
 
 
 //load modules
-const http          = require('http'         );
-const child_process = require('child_process');
-const express       = require('express'      );
-const fs            = require("fs"           );
-const path          = require('path'         );
-const socketio      = require('socket.io'    );
+const http          = require('http'            );
+const child_process = require('child_process'   );
+const express       = require('express'         );
+const fs            = require("fs"              );
+const path          = require('path'            );
+const socketio      = require('socket.io'       );
 
 
 //declare variables
@@ -60,7 +60,6 @@ function client_connection_callback(socket)
   io.emit('connected', recording);
   socket.on("client_clear_logs", client_clear_logs);
   socket.on('disconnect', client_disconnect_callback);
-
   socket.on('record', client_record_callback);
   socket.on('stop', client_stop_callback);
 
@@ -102,7 +101,8 @@ function sense_hat_flight_data_sample(flight_data)
 
 function sense_hat_handle_error(err)
 {
-  io.emit("sense_hat_error", err);
+  console.log("notifying user of an error with the sense hat script");
+  io.emit("sense_hat_error", new SenseHatError(err) );
   start_sense_hat();
 }
 
@@ -129,9 +129,23 @@ function serve_socket_io_js(req,res)
 }
 
 
+function SenseHatError(error)
+{
+  this.message = "sense-hat.js stopped " + sense_hat_state.start_counter + " times";
+  this.error = error;
+}
+
+
 function start_sense_hat()
 {
   sense_hat_state.start_counter++;
+
+  if(sense_hat_state.start_counter >= 3)
+  {
+    io.emit(new SenseHatError("sense-hat.js stopped " + sense_hat_state.start_counter + " times"), null);
+    return;
+  }
+
   console.log("starting " + sense_hat_state.file_name + ", try #" + sense_hat_state.start_counter);
   sense_hat_state.process = child_process.fork(sense_hat_state.file_name, ["--child-process"]);
   sense_hat_state.process.on('error', sense_hat_handle_error);

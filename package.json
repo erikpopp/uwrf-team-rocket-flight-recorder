@@ -3,7 +3,6 @@
     "cli-argparse": "^1.1.2",
     "express": "^4.18.2",
     "node-sense-hat": "0.0.2",
-    "pi-camera": "^1.7.0",
     "socket.io": "^4.6.1"
   },
   "name": "uwrf-rocket-club-flight-recorder",

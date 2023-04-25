@@ -5,6 +5,14 @@
 
 /* tags  */
 
+a {
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 button {
   width: 100%;
   font-size: 2em;
@@ -61,12 +69,16 @@ li.stalled {
   border-color: green;
 }
 
+#start-stop.error {
+  border-color: red;
+}
+
 #start-stop.reconnecting {
   border-color: yellow;
 }
 
 #start-stop.running {
-  border-color: red;
+  border-color: blue;
 }
 
 #start-stop.starting, #start-stop.stopping {
@@ -74,7 +86,6 @@ li.stalled {
 }
 
 #logs {
-/*  border: 5px solid grey; */
   padding: 0;
 }
 
@@ -84,18 +95,45 @@ li.stalled {
   margin: 0;
 }
 
-#logs-wrapper {
-/* nothing yet */
-}
-
 #live-data {
-/*  border: 5px solid grey; */
   font-family: monospace;
-  height: 4em;
   width: 100%;
-  overflow: visible;
 }
 
-#live-data-wrapper {
-/* nothing yet */
+#clear-logs-button {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.accordion-wrapper.closed .accordion-button:before {
+  content: "\25B7";  /* right-facing hollow triangle */
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.accordion-wrapper.closed .accordion-body {
+  display: none;
+}
+
+.accordion-wrapper.open .accordion-button {
+  display: inline-block;
+  margin-bottom: 1em;
+}
+
+.accordion-wrapper.open .accordion-button:before {
+  content: "\25BD";  /* down-facing hollow triangle */
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.accordion-wrapper.open .accordion-body {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
 }

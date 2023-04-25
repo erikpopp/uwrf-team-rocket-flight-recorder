@@ -4,10 +4,12 @@
 console.log("script.js: loaded");
 
 //declare state variables
-var clear_logs;
+var clear_logs_button;
 var logs;
+var messages;
 var recording = false;
 var live_data;
+var show_clear_logs_link;
 var socketio = io();
 
 //declare document variables
@@ -15,10 +17,20 @@ var connection_status;
 var start_stop;
 
 //declare functions
+function accordion()
+{
+//designed to be run as an onClick handler for a link inside an accordion wrapper with an accordion body
+  var wrapper = $(this).parent().closest(".accordion-wrapper");
+  wrapper.toggleClass("closed open");
+}
+
+
 function client_clear_logs()
 {
   console.log("clearing logs");
   socketio.emit("client_clear_logs");
+  show_clear_logs_link.removeClass().addClass("hidden");
+  clear_logs_button.removeClass().addClass("hidden");
 }
 
 
@@ -43,7 +55,7 @@ function disconnected()
 
 function display_flight_data(flight_data)
 {
-  live_data.html(JSON.stringify(flight_data) );
+  live_data.html("Live Flight Data:<br>" + JSON.stringify(flight_data) );
 }
 
 
@@ -56,6 +68,16 @@ function display_logs(log_list)
     logs.append("<li id=\"" + log_list[loop_counter] + "\"><button class=\"download-button\">" + log_list[loop_counter] + "</button></li>");
   }
   logs.html(logs_html);
+
+  if(loop_counter == 0)
+  {
+    clear_logs_button.removeClass().addClass("hidden");
+    show_clear_logs_link.removeClass().addClass("hidden");
+  }
+  else
+  {
+    show_clear_logs_link.removeClass().addClass("visible");
+  }
 }
 
 
@@ -81,7 +103,7 @@ function download_file(event)
 
 function record()
 {
-  console.log("record()");
+  console.log("starting recording");
   start_stop.removeClass().addClass("starting");
   start_stop.text("Starting...");
   socketio.emit("record", record_callback);
@@ -95,25 +117,43 @@ function record_callback()
   start_stop.off("click").on("click", stop);
   start_stop.removeClass().addClass("running");
   start_stop.text("Stop");
+//  $("#live-data-wrapper").removeClass("closed").addClass("open");
 }
 
 
 function setup()
 {
-  clear_logs = $("#clear-logs");
-  clear_logs.click(client_clear_logs);
+  messages = $("#messages");
+  clear_logs_button = $("#clear-logs-button");
+  clear_logs_button.click(client_clear_logs);
   connection_status = $("#connection-status");
   logs = $("#logs");
   logs.click(download_file);
   live_data = $("#live-data");
+  show_clear_logs_link = $("#show-clear-logs");
+  show_clear_logs_link.click(show_clear_logs);
   start_stop = $("#start-stop");
   start_stop.click(record);
+
+  $(".accordion-button").click(accordion);
 }
 
 
 function server_handle_error(error_message)
 {
   console.log("Received an error from sense-hat.js: " + JSON.stringify(error_message) );
+  messages.html("Error:<br>" + JSON.stringify(error_message) );
+  $("#messages-wrapper").removeClass("closed").addClass("open");
+  start_stop.removeClass().addClass("error");
+  start_stop.text("Error");
+  start_stop.off("click").click(record);
+}
+
+
+function show_clear_logs()
+{
+  clear_logs_button.removeClass().addClass("visible");
+  show_clear_logs_link.removeClass().addClass("hidden");
 }
 
 
@@ -134,6 +174,7 @@ function stop_callback()
   start_stop.removeClass().addClass("connected");
   start_stop.text("Start");
   live_data.text("");
+  $("#live-data-wrapper").removeClass("open").addClass("closed");
 }
 
 
@@ -141,7 +182,7 @@ function stop_callback()
 socketio.on("connected", connected);
 socketio.on("disconnect", disconnected);
 socketio.on("record-acknowledgement", record_callback);
-socketio.on("sense_hat_handle_error", server_handle_error);
+socketio.on("sense_hat_error", server_handle_error);
 socketio.on("server_flight_data_sample", display_flight_data);
 socketio.on("server_list_logs", display_logs);
 socketio.on("stop", stop_callback);
