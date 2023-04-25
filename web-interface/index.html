@@ -11,26 +11,35 @@
 <body>
 
 <header>
-  <img src="" alt="Header Image" />
+<!--  <img src="" alt="Header Image" /> -->
   <h1>UWRF Team Rocket Flight Recorder</h1>
 </header>
 
 <main>
-  <p id="connection-status">Connecting...</p>
-  <button id="start-stop">Start</button>
+  <button id="start-stop">Connecting...</button>
+  <p id="live-data-wrapper">
+    <h2>Live Data:</h2>
+    <div id="live-data"></div>
+  </p>
 
-  <p id="messages"></p>
+<!-- <button id="clear-logs">Clear Logs</button> -->
 
-  <button id="clear-logs">Clear Logs</button>
-  <ol id="file-picker"></ol>
+  <br>
+  <br>
+  <br>
+
+  <p id="logs-wrapper">
+    <h2>Logs for Download:</h2>
+    <ol id="logs"></ol>
+  </p>
 
   Features:
   <ul>
     <li class="finished">Connect to Web UI</li>
     <li class="finished">Monitor state of flight recorder script in real time</li>
     <li class="finished">Show data from flight recorder script in real time</li>
-    <li class="unfinished">List and download logs</li>
-    <li class="unfinished">Make it look good</li>
+    <li class="finished">List and download logs</li>
+    <li class="finished">Make it look good</li>
     <li class="unfinished">(if time) Add support for camera</li>
     <li class="unfinished">Clean and organize code</li>
     <li class="unfinished">Write and format documentation</li>

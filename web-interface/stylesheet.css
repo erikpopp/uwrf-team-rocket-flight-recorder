@@ -1,15 +1,33 @@
+
 /* stylesheet.css
    Stylesheet for UWRF Team Rocket Flight Recorder Web UI
 */
 
+/* tags  */
+
 button {
   width: 100%;
   font-size: 2em;
+  font-family: "Lucida Console", monospace;
+  border-radius: 1em;
+  border-width: 0.3em;
+  cursor: pointer;
 }
 
-li {
-  list-style: none;
+header, main, footer {
+  width: 90%;
+  margin: auto;
+  text-align: center;
 }
+
+h1, h2, div, p, ol {
+  border-radius: 1em;
+  font-family: "Lucida Console", monospace;
+}
+
+
+
+/* progress list */
 
 li::before {
   content: '';
@@ -29,35 +47,55 @@ li.stalled {
   list-style-image: url('yellow-checkmark.png');
 }
 
+
+/* IDs */
+
 #start-stop {
-  background-color: green;
+  background-color: light-grey;
+  border-width: 0.5em;
+  border-color: yellow;
+  font-weight: bold;
+}
+
+#start-stop.connected {
+  border-color: green;
+}
+
+#start-stop.reconnecting {
+  border-color: yellow;
 }
 
 #start-stop.running {
-  background-color: red;
+  border-color: red;
 }
 
 #start-stop.starting, #start-stop.stopping {
-  background-color: yellow;
+  border-color: yellow;
 }
 
-#connection-status {
-  background-color: red;
+#logs {
+/*  border: 5px solid grey; */
+  padding: 0;
 }
 
-#connection-status.connected {
-  background-color: green;
+#logs li {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-#connection-status.reconnecting {
-  background-color: yellow;
+#logs-wrapper {
+/* nothing yet */
 }
 
-#file-picker {
-  border: 5px solid orange;
+#live-data {
+/*  border: 5px solid grey; */
+  font-family: monospace;
+  height: 4em;
+  width: 100%;
+  overflow: visible;
 }
 
-#messages {
-  border: 5px solid grey;
+#live-data-wrapper {
+/* nothing yet */
 }
-

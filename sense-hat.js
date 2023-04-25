@@ -45,7 +45,7 @@ var log_file_name_base = "uwrf-rocket-club-flight-data-";
 var log_file_directory = "./flight-data";
 var sample_counter = 0;
 var report;
-var sensor_read_interval_ms = 1000;
+var sensor_read_interval_ms = 20;
 var sensor_read_interval_handle;
 var api;
 
