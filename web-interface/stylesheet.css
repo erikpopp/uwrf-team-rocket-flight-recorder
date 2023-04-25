@@ -34,28 +34,6 @@ h1, h2, div, p, ol {
 }
 
 
-
-/* progress list */
-
-li::before {
-  content: '';
-  display: inline-block;
-  background-size: contain;
-}
-
-li.finished {
-  list-style-image: url('green-checkmark.png');
-}
-
-li.unfinished {
-  list-style-image: url('red-checkmark.png');
-}
-
-li.stalled {
-  list-style-image: url('yellow-checkmark.png');
-}
-
-
 /* IDs */
 
 #start-stop {
