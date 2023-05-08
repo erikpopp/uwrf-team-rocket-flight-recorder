@@ -94,7 +94,8 @@ function client_stop_callback(ack)
 
 function sense_hat_flight_data_sample(flight_data)
 {
-  console.log("flight data sample: " + JSON.stringify(flight_data) );
+//  console.log("flight data sample: " + JSON.stringify(flight_data) );
+//  console.log("Sending flight data sample to user");
   io.emit("server_flight_data_sample", flight_data);
 }
 
@@ -109,14 +110,15 @@ function sense_hat_handle_error(err)
 
 function sense_hat_process_message(sense_hat_message)
 {
-  console.log("server.js: received this message from sense-hat.js: " + JSON.stringify(sense_hat_message) );
+//  console.log("server.js: received this message from sense-hat.js: " + JSON.stringify(sense_hat_message) );
+//  console.log("server.js: received message from sense-hat.js");
   sense_hat_server_api[sense_hat_message.type].call(this, sense_hat_message);
 }
 
 
 function server_list_logs()
 {
-  console.log("listing logs");
+//  console.log("listing logs");
   fs.readdir(path.normalize(flight_data_log_directory), (err, file_list) => {
     io.emit("server_list_logs", file_list);
   });

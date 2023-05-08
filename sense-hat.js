@@ -89,7 +89,8 @@ function report()
 
 function report_console(flight_data_sample)
 {
-  console.log("Sample data: " + JSON.stringify(flight_data_sample) );
+//  console.log("Sample data: " + JSON.stringify(flight_data_sample) );
+  console.log("Recording data sample");
 }
 
 function report_server(flight_data_sample)
@@ -108,7 +109,7 @@ function sensor_read()
 function sensor_read_callback(err, data)
 {
   sample_counter++;
-  console.log("Taking sample #" + sample_counter);
+//  console.log("Taking sample #" + sample_counter);
 
 //inform of any errors in sensor reading
   if(err !== null)
