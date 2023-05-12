@@ -1,0 +1,16 @@
+[Unit]
+Description=UWRF Team Rocket Flight Recorder
+Documentation=https://github.com/erikpopp/uwrf-team-rocket-flight-recorder
+After=network.target
+
+[Service]
+Environment=NODE_PORT=80
+Type=simple
+User=root
+Group=root
+ExecStart=/root/n/bin/uwrf-team-rocket-flight-recorder-server
+Restart=on-failure
+StandardOutput=file:/var/log/uwrf-team-rocket-flight-recorder.log
+
+[Install]
+WantedBy=default.target

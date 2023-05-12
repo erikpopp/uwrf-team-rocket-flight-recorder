@@ -7,12 +7,16 @@
   },
   "name": "uwrf-rocket-club-flight-recorder",
   "version": "1.0.0",
-  "description": "Records flight data on the rocket. It might include a fancy web interface too.",
-  "main": "forever server.js sense-hat.js",
+  "description": "Records flight data on the rocket. It comes with a fancy web interface.",
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Erik Popp",
-  "license": "ISC"
+  "license": "ISC",
+  "bin": {
+    "uwrf-team-rocket-flight-recorder": "./server.js",
+    "uwrf-team-rocket-flight-recorder-server": "./server.js",
+    "uwrf-team-rocket-flight-recorder-script": "./sense-hat.js"
+  }
 }

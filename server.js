@@ -1,3 +1,4 @@
+#!/usr/bin/env /root/n/bin/node
 //server.js
 //serves the web UI for the rocket brain
 //relays commands and data to other parts of the flight data recorder
@@ -16,25 +17,26 @@ X Make the UI look good
 
 
 //load modules
-const http          = require('http'            );
-const child_process = require('child_process'   );
-const express       = require('express'         );
+const http          = require("http"            );
+const child_process = require("child_process"   );
+const express       = require("express"         );
 const fs            = require("fs"              );
-const path          = require('path'            );
-const socketio      = require('socket.io'       );
+const path          = require("path"            );
+const socketio      = require("socket.io"       );
 
 
 //declare variables
-var flight_data_log_directory = path.normalize("flight-data");
+var flight_data_log_directory = path.normalize(__dirname + "/flight-data");
 var flight_data_log_list = [];
 var list_logs_interval_handle;
 var recording = false;
 var sense_hat_server_api;
 var sense_hat_state = {
-  file_name: "sense-hat.js",
+  file_name: path.normalize(__dirname + "/sense-hat.js"),
   process: undefined,
   start_counter: 0
 };
+var web_interface_directory = path.normalize(__dirname + "/web-interface");
 
 
 //define functions
@@ -43,7 +45,7 @@ function client_clear_logs()
   console.log("clearing logs");
   fs.readdir(flight_data_log_directory, (err, file_list) => {
     file_list.forEach(file => {
-      var full_file_path = path.normalize("./" + flight_data_log_directory + "/" + file);
+      var full_file_path = flight_data_log_directory + "/" + file;
       fs.unlink(full_file_path, (err) => {
         console.log("deleting " + full_file_path );
         console.log("error: " + JSON.stringify(err) );
@@ -56,12 +58,12 @@ function client_clear_logs()
 
 function client_connection_callback(socket)
 {
-  console.log('Received socket.io connection');
-  io.emit('connected', recording);
+  console.log("Received socket.io connection");
+  io.emit("connected", recording);
   socket.on("client_clear_logs", client_clear_logs);
-  socket.on('disconnect', client_disconnect_callback);
-  socket.on('record', client_record_callback);
-  socket.on('stop', client_stop_callback);
+  socket.on("disconnect", client_disconnect_callback);
+  socket.on("record", client_record_callback);
+  socket.on("stop", client_stop_callback);
 
   server_list_logs();
 }
@@ -69,13 +71,13 @@ function client_connection_callback(socket)
 
 function client_disconnect_callback()
 {
-  console.log('Socket.io session disconnected');
+  console.log("Socket.io session disconnected");
 }
 
 
 function client_record_callback(ack)
 {
-  console.log('starting recording');
+  console.log("starting recording");
   recording = true;
   sense_hat_state.process.send("server_start_recording");
   ack("Acknowledgement");
@@ -84,12 +86,21 @@ function client_record_callback(ack)
 
 function client_stop_callback(ack)
 {
-  console.log('stopping recording');
+  console.log("stopping recording");
   recording = false;
   sense_hat_state.process.send("server_stop_recording");
   server_list_logs();
   ack();
 }
+
+
+//function delete_RTIMULib()
+//{
+
+//  fs.unlink("./RTIMULib.ini", (file) => {
+//    console.log("failed to delete " + file);
+//});
+//}
 
 
 function sense_hat_flight_data_sample(flight_data)
@@ -119,7 +130,7 @@ function sense_hat_process_message(sense_hat_message)
 function server_list_logs()
 {
 //  console.log("listing logs");
-  fs.readdir(path.normalize(flight_data_log_directory), (err, file_list) => {
+  fs.readdir(flight_data_log_directory, (err, file_list) => {
     io.emit("server_list_logs", file_list);
   });
 }
@@ -127,7 +138,7 @@ function server_list_logs()
 
 function serve_socket_io_js(req,res)
 {
-  res.sendFile(path.join(__dirname + '/node_modules/socket.io/client-dist/socket.io.js') );
+  res.sendFile(path.join(__dirname + "/node_modules/socket.io/client-dist/socket.io.js") );
 }
 
 
@@ -150,8 +161,8 @@ function start_sense_hat()
 
   console.log("starting " + sense_hat_state.file_name + ", try #" + sense_hat_state.start_counter);
   sense_hat_state.process = child_process.fork(sense_hat_state.file_name, ["--child-process"]);
-  sense_hat_state.process.on('error', sense_hat_handle_error);
-  sense_hat_state.process.on('close', start_sense_hat);
+  sense_hat_state.process.on("error", sense_hat_handle_error);
+  sense_hat_state.process.on("close", start_sense_hat);
   sense_hat_state.process.on("message", sense_hat_process_message);
 }
 
@@ -175,7 +186,7 @@ sense_hat_server_api = {
 
 
 //serve local socket.io script from package repository
-app.use('/socket.io.js', serve_socket_io_js);
+app.use("/socket.io.js", serve_socket_io_js);
 
 
 //serve flight data logs
@@ -184,17 +195,17 @@ app.use("/flight-data", express.static(flight_data_log_directory) );
 
 
 //set up express to serve interface
-app.use("/", express.static("web-interface") );
+app.use("/", express.static(web_interface_directory) );
 
 
 //set up socket.io to support a bidirectional communication channel between the user and the server
 const http_server = http.createServer(app);
 const io          = new socketio.Server(http_server);
-io.on('connection', client_connection_callback);
+io.on("connection", client_connection_callback);
 
 const port = 80;
 http_server.listen(port);
-console.debug('Server listening on port ' + port);
+console.debug("Server listening on port " + port);
 
 
 
@@ -205,3 +216,8 @@ start_sense_hat();
 
 //watch log folder for changes
 fs.watch(flight_data_log_directory, server_list_logs);
+
+
+//delete RTIMULib.ini from working directory on close
+//process.once("close", delete_RTIMULib);
+//process.once("SIGINT", delete_RTIMULib);

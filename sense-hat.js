@@ -1,3 +1,4 @@
+#!/usr/bin/env /root/n/bin/node
 //sense-hat.js
 //read from sense hat
 //store data into files for later use
@@ -13,6 +14,7 @@ X Find a way to efficiently pipe a data stream to the web UI
 //const child_process = require("child_process");
 const cli_argparse  = require("cli-argparse");
 const libsensehat   = require("node-sense-hat");
+const path          = require("path");
 const fs            = require("fs");
 
 
@@ -42,7 +44,7 @@ var help = ["",
             ""].join("\n");
 var log_file_name;
 var log_file_name_base = "uwrf-rocket-club-flight-data-";
-var log_file_directory = "./flight-data";
+var log_file_directory = path.normalize(__dirname + "/flight-data");
 var sample_counter = 0;
 var report;
 var sensor_read_interval_ms = 20;
@@ -131,7 +133,7 @@ function server_start_recording()
   console.log("Starting recording every " + sensor_read_interval_ms + " ms");
   sensor_read_interval_handle = setInterval(getValue.bind(IMU), sensor_read_interval_ms, sensor_read_callback); //bind getValue() to the IMU object so its "this" object will be correct
   log_file_name = get_valid_log_file_name();
-  log_file_stream = fs.createWriteStream(log_file_name, {flags: 'a', AutoClose: true} );
+  log_file_stream = fs.createWriteStream(log_file_name, {flags: "a", AutoClose: true} );
 }
 
 function server_stop_recording()
