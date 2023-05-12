@@ -53,12 +53,14 @@ n 14.21.3
 ```  
 npm install uwrf-team-rocket-flight-recorder
 ```
-13. Copy the included systemd .service file to /etc/systemd/system or /lib/systemd/system  
+13. Copy the included system config files to their locations  
 ```  
-cp uwrf-team-rocket-flight-recorder.service /lib/systemd/system
+cp dietpi-config-files/uwrf-team-rocket-flight-recorder.service /lib/systemd/system
+cp dietpi-config-files/dnsmasq.conf /etc/dnsmasq.conf
 ```
-14. Set the Raspberry Pi to serve DHCP addresses on its ethernet port or run as a Wi-Fi hotspot (tutorial)
-15. Connect control computer/phone to Raspberry Pi
+14. (optional) To reduce the risk of data loss, edit /etc/fstab to add the boot option "sync" to the root partition. I've included a sample fstab in dietpi-config-files/, but yours will probably have different partition UUIDs.
+15. Set the Raspberry Pi to serve DHCP addresses on its ethernet port or run as a Wi-Fi hotspot (tutorial)
+16. Connect control computer/phone to Raspberry Pi
 
 ##Notes:
 - I wrote this script under the assumption that I was running as root. If you are not running node as root (usually a good idea), you many have to add "sudo" to the command string for spawning the "sense-hat.js" process. I'm not sure about this, though.
