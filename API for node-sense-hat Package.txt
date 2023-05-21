@@ -1,0 +1,41 @@
+node-sense-hat API
+
+{ getJoystick: [Function (anonymous)] }
+{
+  clear: [Function (anonymous)],
+  setPixel: [Function (anonymous)],
+  getPixel: [Function: getPixel],
+  setPixels: [Function: setPixels],
+  getPixels: [Function: getPixels],
+  flipH: [Function (anonymous)],
+  flipV: [Function (anonymous)],
+  setRotation: [Function (anonymous)],
+  showMessage: [Function (anonymous)],
+  flashMessage: [Function (anonymous)],
+  showLetter: [Function (anonymous)],
+  loadImage: [Function (anonymous)],
+  rotation: [Getter/Setter],
+  gamma: [Getter/Setter],
+  gammaReset: [Function: gammaReset],
+  lowLight: [Getter/Setter],
+  sync: {
+    sleep: [Function: sleep],
+    clear: [Function: clearSync],
+    getPixel: [Function: getPixelSync],
+    setPixel: [Function: setPixelSync],
+    getPixels: [Function: getPixelsSync],
+    setPixels: [Function: setPixelsSync],
+    flipH: [Function: flipHSync],
+    flipV: [Function: flipVSync],
+    setRotation: [Function: setRotationSync],
+    showMessage: [Function: showMessageSync],
+    flashMessage: [Function: flashMessageSync],
+    showLetter: [Function: showLetterSync],
+    loadImage: [Function: loadImageSync],
+    rotation: [Getter/Setter],
+    gamma: [Getter/Setter],
+    gammaReset: [Function: gammaReset],
+    lowLight: [Getter/Setter]
+  }
+}
+{ IMU: [Function: IMU] }
