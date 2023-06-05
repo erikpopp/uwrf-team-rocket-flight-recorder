@@ -1,5 +1,9 @@
 # UWRF Falcon Rocket Team Flight Recorder
 
+## Screenshot:
+
+![Flight Recorder Web Interface Screenshot for UWRF Falcon Team Rocket Flight Recorder](screenshot.png "Web Interface Screenshot")
+
 ## Description:
 
 A rocket flight recorder that runs on a Raspberry Pi with a Sense Hat. It can be used as a template for a Node.js app that does some kind of long processing in the background on a separate thread.
@@ -9,8 +13,6 @@ It comes with a web interface that allows a user to start or stop the flight rec
 The web interface also notifies the user of the current state of the script on the Pi and attempts to notify the user of any errors it detects.
 
 These directions are intended to permit a user to connect with the Pi over Ethernet to control the flight recorder script. If you are connecting by Wi-Fi, adjust the network setup steps accordingly.
-
-![Flight Recorder Web Interface Screenshot for UWRF Falcon Team Rocket Flight Recorder](screenshot.png "Web Interface Screenshot")
 
 ## Usage:
 1. Boot the Raspberry Pi
