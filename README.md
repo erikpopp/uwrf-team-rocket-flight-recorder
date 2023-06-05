@@ -1,6 +1,6 @@
-#UWRF Falcon Rocket Team Flight Recorder
+# UWRF Falcon Rocket Team Flight Recorder
 
-##Description:
+## Description:
 
 A rocket flight recorder that runs on a Raspberry Pi with a Sense Hat. It can be used as a template for a Node.js app that does some kind of long processing in the background on a separate thread.
 
@@ -11,14 +11,15 @@ The web interface also notifies the user of the current state of the script on t
 These directions are intended to permit a user to connect with the Pi over Ethernet to control the flight recorder script. If you are connecting by Wi-Fi, adjust the network setup steps accordingly.
 
 ![Web Interface Screenshot for UWRF Falcon Rocket Team Flight Recorder](screenshot.png)
+![Flight Recorder Web Interface Screenshot for UWRF Falcon Team Rocket Flight Recorder](screenshot.png "Web Interface Screenshot")
 
-##Usage:
+## Usage:
 1. Boot the Raspberry Pi
 2. Connect control computer/phone to Pi using networking technology of choice
 3. On control computer/phone, open a web browser and go to IP address of Pi
 4. Once web interface is up, click the "Start" button to start recording flight data
 
-##Setup:
+## Setup:
 1. Physically install sense hat on Raspberry Pi
 2. Install dietpi on Raspberry Pi  
 If using another distro, setup instructions may vary from this point on.
@@ -62,7 +63,7 @@ cp dietpi-config-files/dnsmasq.conf /etc/dnsmasq.conf
 15. Set the Raspberry Pi to serve DHCP addresses on its ethernet port or run as a Wi-Fi hotspot (tutorial)
 16. Connect control computer/phone to Raspberry Pi
 
-##Notes:
+## Notes:
 - I wrote this script under the assumption that I was running as root. If you are not running node as root (usually a good idea), you many have to add "sudo" to the command string for spawning the "sense-hat.js" process. I'm not sure about this, though.
 - Although I did not make any design decisions that I knew were overtly insecure, security was not my primary priority on this project. Thus, there is no user authentication and no client input sanitization. I also made no attempt to sanitize IPC messaging or calls, so a compromised "server.js" process running as a normal user may be able to run arbitrary privileged code if it it se to run "sense-hat.js" as root.
 - If you end up using this for anything, whether for its intended purpose or as a template, I'd love to know.
