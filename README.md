@@ -1,7 +1,5 @@
 # UWRF Falcon Rocket Team Flight Recorder
 
-## Screenshot:
-
 ![Flight Recorder Web Interface Screenshot for UWRF Falcon Team Rocket Flight Recorder](screenshot.png "Web Interface Screenshot")
 
 ## Description:
