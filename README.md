@@ -37,6 +37,7 @@ apt update
 apt install sense-hat build-essential git  
 ```  
 build-essential is needed by the nodejs binding library node-sense-hat, and git is needed by the n nodejs version manager
+
 9. (optional) Install quality-of-life packages:  
 ```
 apt install syncthing less mlocate rsync e2fsprogs
