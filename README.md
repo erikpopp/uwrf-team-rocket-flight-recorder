@@ -10,7 +10,6 @@ The web interface also notifies the user of the current state of the script on t
 
 These directions are intended to permit a user to connect with the Pi over Ethernet to control the flight recorder script. If you are connecting by Wi-Fi, adjust the network setup steps accordingly.
 
-![Web Interface Screenshot for UWRF Falcon Rocket Team Flight Recorder](screenshot.png)
 ![Flight Recorder Web Interface Screenshot for UWRF Falcon Team Rocket Flight Recorder](screenshot.png "Web Interface Screenshot")
 
 ## Usage:
