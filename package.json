@@ -9,6 +9,10 @@
   "version": "1.0.0",
   "description": "Records flight data on the rocket. It comes with a fancy web interface.",
   "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erikpopp/uwrf-team-rocket-flight-recorder"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
