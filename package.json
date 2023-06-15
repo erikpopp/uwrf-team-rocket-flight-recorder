@@ -5,7 +5,7 @@
     "node-sense-hat": "0.0.2",
     "socket.io": "^4.6.1"
   },
-  "name": "uwrf-rocket-club-flight-recorder",
+  "name": "uwrf-team-rocket-flight-recorder",
   "version": "1.0.0",
   "description": "Records flight data on the rocket. It comes with a fancy web interface.",
   "devDependencies": {},
