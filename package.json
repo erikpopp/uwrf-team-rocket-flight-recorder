@@ -6,7 +6,7 @@
     "socket.io": "^4.6.1"
   },
   "name": "uwrf-team-rocket-flight-recorder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Records flight data on the rocket. It comes with a fancy web interface.",
   "devDependencies": {},
   "repository": {
