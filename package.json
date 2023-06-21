@@ -25,5 +25,9 @@
     "uwrf-team-rocket-flight-recorder": "./server.js",
     "uwrf-team-rocket-flight-recorder-server": "./server.js",
     "uwrf-team-rocket-flight-recorder-script": "./sense-hat.js"
+  },
+  "volta": {
+    "node": "14.21.3",
+    "npm": "6.14.18"
   }
 }
