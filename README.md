@@ -57,13 +57,14 @@ apt install syncthing less mlocate rsync e2fsprogs
 These made it easier for me to develop, and/or are nice to have if something goes wrong. To get an up-to-date syncthing, follow the directions at [Up-To-Date Syncthing on Raspberry Pi](https://raspberrypi.stackexchange.com/questions/125081/up-to-date-syncthing-on-raspberry-pi)
 
 10. Enable I2C using:  
-"dietpi-config" -> "Advanced Options -> "I2C State" (just press <enter> to toggle from off to on)
+"dietpi-config" -> "Advanced Options -> "I2C State" (just press [enter] to toggle from off to on)
 
 11. Install Node.js version 14.21.3 using the "n" nodejs version manager  
 ```  
 curl -L https://git.io/n-install | bash  
 n 14.21.3
 ```
+I used [node-sense-hat](https://github.com/balena-io-experimental/node-sense-hat) to access the Sense Hat, which in turn relies on [RTIMULib](https://github.com/RPi-Distro/RTIMULib), which seems to only be compatible with NodeJS 14.
 
 12. Install "flight-recorder" nodejs package locally  
 ```  
@@ -76,7 +77,7 @@ cp dietpi-config-files/uwrf-team-rocket-flight-recorder.service /lib/systemd/sys
 cp dietpi-config-files/dnsmasq.conf /etc/dnsmasq.conf
 ```
 
-14. (optional) To reduce the risk of data loss, edit /etc/fstab to add the boot option "sync" to the root partition. I've included a sample fstab in dietpi-config-files/, but yours will probably have different partition UUIDs.
+14. (optional) To reduce the risk of data loss, edit /etc/fstab to add the boot option "sync" to the root partition. I've included a sample fstab in dietpi-config-files/, but yours will have different partition UUIDs.
 
 15. Set the Raspberry Pi to serve DHCP addresses on its ethernet port or run as a Wi-Fi hotspot (tutorial)
 
@@ -85,7 +86,7 @@ cp dietpi-config-files/dnsmasq.conf /etc/dnsmasq.conf
 ## Notes:
 - I wrote this script under the assumption that I was running as root. If you are not running node as root (usually a good idea), you many have to add "sudo" to the command string for spawning the "sense-hat.js" process. I'm not sure about this, though.
 
-- Although I did not make any design decisions that I knew were overtly insecure, security was not my primary priority on this project. Thus, there is no user authentication and no client input sanitization. I also made no attempt to sanitize IPC messaging or calls, so a compromised "server.js" process running as a normal user may be able to run arbitrary privileged code if it it se to run "sense-hat.js" as root.
+- Although I did not make any design decisions that I knew were overtly insecure, security was not my primary priority on this project. Thus, there is no user authentication and no client input sanitization. I also made no attempt to sanitize IPC messaging or calls, so a compromised "server.js" process running as a normal user may be able to run arbitrary privileged code through "sense-hat.js", which probably needs root.
 
 - If you end up using this for anything, whether for its intended purpose or as a template, I'd love to know.
 
